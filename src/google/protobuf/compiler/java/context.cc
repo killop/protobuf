@@ -17,6 +17,7 @@
 #include "google/protobuf/compiler/java/helpers.h"
 #include "google/protobuf/compiler/java/internal_helpers.h"
 #include "google/protobuf/compiler/java/name_resolver.h"
+#include "google/protobuf/compiler/java/names.h"
 #include "google/protobuf/descriptor.h"
 
 namespace google {
@@ -130,8 +131,8 @@ void Context::InitializeFieldGeneratorInfoForMessage(
   for (int i = 0; i < message->oneof_decl_count(); ++i) {
     const OneofDescriptor* oneof = message->oneof_decl(i);
     OneofGeneratorInfo info;
-    info.name = UnderscoresToCamelCase(oneof->name(), false);
-    info.capitalized_name = UnderscoresToCamelCase(oneof->name(), true);
+    info.name = UnderscoresToCamelCase(oneof->name(), false, options_.preserve_names);
+    info.capitalized_name = UnderscoresToCamelCase(oneof->name(), true, options_.preserve_names);
     oneof_generator_info_map_[oneof] = info;
   }
 }
@@ -144,10 +145,10 @@ void Context::InitializeFieldGeneratorInfoForFields(
   std::vector<std::string> conflict_reason(fields.size());
   for (int i = 0; i < fields.size(); ++i) {
     const FieldDescriptor* field = fields[i];
-    const std::string& name = CapitalizedFieldName(field);
+    const std::string& name = CapitalizedFieldName(field, options_.preserve_names);
     for (int j = i + 1; j < fields.size(); ++j) {
       const FieldDescriptor* other = fields[j];
-      const std::string& other_name = CapitalizedFieldName(other);
+      const std::string& other_name = CapitalizedFieldName(other, options_.preserve_names);
       if (name == other_name) {
         is_conflict[i] = is_conflict[j] = true;
         conflict_reason[i] = conflict_reason[j] =
@@ -168,8 +169,8 @@ void Context::InitializeFieldGeneratorInfoForFields(
   for (int i = 0; i < fields.size(); ++i) {
     const FieldDescriptor* field = fields[i];
     FieldGeneratorInfo info;
-    info.name = CamelCaseFieldName(field);
-    info.capitalized_name = CapitalizedFieldName(field);
+    info.name = CamelCaseFieldName(field, options_.preserve_names);
+    info.capitalized_name = CapitalizedFieldName(field, options_.preserve_names);
     // For fields conflicting with some other fields, we append the field
     // number to their field names in generated code to avoid conflicts.
     if (is_conflict[i]) {

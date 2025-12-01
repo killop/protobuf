@@ -112,8 +112,20 @@ void PrintGencodeVersionValidator(io::Printer* printer, bool oss_runtime,
 }
 
 std::string UnderscoresToCamelCase(absl::string_view input,
-                                   bool cap_next_letter) {
+                                   bool cap_next_letter,
+                                   bool preserve_names) {
   ABSL_CHECK(!input.empty());
+  
+  // If preserve_names is true, return the original name without conversion
+  if (preserve_names) {
+    std::string result(input);
+    // Still need to handle the trailing "#" case
+    if (!result.empty() && result[result.size() - 1] == '#') {
+      result[result.size() - 1] = '_';
+    }
+    return result;
+  }
+  
   std::string result;
   // Note:  I distrust ctype.h due to locales.
   for (int i = 0; i < input.size(); i++) {
@@ -206,9 +218,16 @@ std::string UniqueFileScopeIdentifier(const Descriptor* descriptor) {
       "static_", absl::StrReplaceAll(descriptor->full_name(), {{".", "_"}}));
 }
 
-std::string CamelCaseFieldName(const FieldDescriptor* field) {
-  std::string fieldName = UnderscoresToCamelCase(field);
-  if ('0' <= fieldName[0] && fieldName[0] <= '9') {
+std::string CamelCaseFieldName(const FieldDescriptor* field,
+                               bool preserve_names) {
+  std::string fieldName;
+  if (preserve_names) {
+    // Use original field name
+    fieldName = std::string(field->name());
+  } else {
+    fieldName = UnderscoresToCamelCase(field);
+  }
+  if (!fieldName.empty() && '0' <= fieldName[0] && fieldName[0] <= '9') {
     return absl::StrCat("_", fieldName);
   }
   return fieldName;

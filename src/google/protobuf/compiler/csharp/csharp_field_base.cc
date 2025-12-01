@@ -15,6 +15,7 @@
 #include "google/protobuf/compiler/code_generator.h"
 #include "absl/log/absl_log.h"
 #include "google/protobuf/compiler/csharp/csharp_helpers.h"
+#include "google/protobuf/compiler/csharp/csharp_options.h"
 #include "google/protobuf/compiler/csharp/names.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/descriptor.pb.h"
@@ -181,22 +182,31 @@ void FieldGeneratorBase::AddPublicMemberAttributes(io::Printer* printer) {
 }
 
 std::string FieldGeneratorBase::oneof_case_name() {
-  return GetOneofCaseName(descriptor_);
+  return GetOneofCaseName(descriptor_, options());
 }
 
 std::string FieldGeneratorBase::oneof_property_name() {
+  if (options()->preserve_names) {
+    return std::string(descriptor_->containing_oneof()->name());
+  }
   return UnderscoresToCamelCase(descriptor_->containing_oneof()->name(), true);
 }
 
 std::string FieldGeneratorBase::oneof_name() {
+  if (options()->preserve_names) {
+    return std::string(descriptor_->containing_oneof()->name());
+  }
   return UnderscoresToCamelCase(descriptor_->containing_oneof()->name(), false);
 }
 
 std::string FieldGeneratorBase::property_name() {
-  return GetPropertyName(descriptor_);
+  return GetPropertyName(descriptor_, options());
 }
 
 std::string FieldGeneratorBase::name() {
+  if (options()->preserve_names) {
+    return GetFieldName(descriptor_);
+  }
   return UnderscoresToCamelCase(GetFieldName(descriptor_), false);
 }
 
@@ -339,7 +349,8 @@ std::string FieldGeneratorBase::default_value(const FieldDescriptor* descriptor)
       return absl::StrCat(
           GetClassName(descriptor->default_value_enum()->type()), ".",
           GetEnumValueName(descriptor->default_value_enum()->type()->name(),
-                           descriptor->default_value_enum()->name()));
+                           descriptor->default_value_enum()->name(),
+                           options()->preserve_names));
     case FieldDescriptor::TYPE_MESSAGE:
     case FieldDescriptor::TYPE_GROUP:
       if (IsWrapperType(descriptor)) {

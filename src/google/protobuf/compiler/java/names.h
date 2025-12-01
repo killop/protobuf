@@ -121,20 +121,23 @@ PROTOC_EXPORT std::string FileClassName(const FileDescriptor* file);
 // Requires:
 //   descriptor != NULL
 // Returns:
-//   Capitalized camel case field name.
-PROTOC_EXPORT std::string CapitalizedFieldName(const FieldDescriptor* field);
+//   Capitalized camel case field name (or original name if preserve_names).
+PROTOC_EXPORT std::string CapitalizedFieldName(const FieldDescriptor* field,
+                                               bool preserve_names = false);
 
 // Requires:
 //   descriptor != NULL
 // Returns:
-//   Capitalized camel case oneof name.
-PROTOC_EXPORT std::string CapitalizedOneofName(const OneofDescriptor* oneof);
+//   Capitalized camel case oneof name (or original name if preserve_names).
+PROTOC_EXPORT std::string CapitalizedOneofName(const OneofDescriptor* oneof,
+                                               bool preserve_names = false);
 
 // Returns:
 //   Converts a name to camel-case. If cap_first_letter is true, capitalize the
-//   first letter.
+//   first letter. If preserve_names is true, returns the original name.
 PROTOC_EXPORT std::string UnderscoresToCamelCase(absl::string_view input,
-                                                 bool cap_next_letter);
+                                                 bool cap_next_letter,
+                                                 bool preserve_names = false);
 // Requires:
 //   field != NULL
 // Returns:

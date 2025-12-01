@@ -58,6 +58,20 @@ void MessageFieldGenerator::GenerateMembers(io::Printer* printer) {
       "$access_level$ bool Has$property_name$ {\n"
       "  get { return $name$_ != null; }\n"
       "}\n");
+    
+    // The "FooSpecified" property, if generate_specified option is set.
+    if (options()->generate_specified) {
+      printer->Print(variables_,
+        "/// <summary>Gets or sets whether the \"$descriptor_name$\" field is specified (for XML serialization compatibility)</summary>\n");
+      AddPublicMemberAttributes(printer);
+      printer->Print(
+        variables_,
+        "$access_level$ bool $property_name$Specified {\n"
+        "  get { return Has$property_name$; }\n"
+        "  set { /* setter for serialization compatibility */ }\n"
+        "}\n");
+    }
+    
     printer->Print(
       variables_,
       "/// <summary>Clears the value of the $descriptor_name$ field</summary>\n");

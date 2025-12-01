@@ -70,7 +70,8 @@ std::string ToCamelCase(absl::string_view input, bool lower_first);
 
 // Similar to UnderscoresToCamelCase, but guarantees that the result is a
 // complete Java identifier by adding a _ if needed.
-std::string CamelCaseFieldName(const FieldDescriptor* field);
+std::string CamelCaseFieldName(const FieldDescriptor* field,
+                               bool preserve_names = false);
 
 // Get an identifier that uniquely identifies this type within the file.
 // This is used to declare static variables related to this type at the

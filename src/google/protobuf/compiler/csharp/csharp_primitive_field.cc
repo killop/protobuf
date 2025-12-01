@@ -138,6 +138,19 @@ void PrimitiveFieldGenerator::GenerateMembers(io::Printer* printer) {
         variables_,
         "$has_field_check$; }\n}\n");
     }
+    
+    // The "FooSpecified" property, if generate_specified option is set.
+    if (options()->generate_specified) {
+      printer->Print(variables_,
+        "/// <summary>Gets or sets whether the \"$descriptor_name$\" field is specified (for XML serialization compatibility)</summary>\n");
+      AddPublicMemberAttributes(printer);
+      printer->Print(
+        variables_,
+        "$access_level$ bool $property_name$Specified {\n"
+        "  get { return Has$property_name$; }\n"
+        "  set { /* setter for serialization compatibility */ }\n"
+        "}\n");
+    }
   }
 
   // The "ClearFoo" method, where required.

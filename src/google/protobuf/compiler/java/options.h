@@ -27,7 +27,8 @@ struct Options {
         annotate_code(false),
         strip_nonfunctional_codegen(false),
         jvm_dsl(true),
-        dsl_use_concrete_types(false) {}
+        dsl_use_concrete_types(false),
+        preserve_names(false) {}
 
   bool generate_immutable_code;
   bool generate_mutable_code;
@@ -57,6 +58,16 @@ struct Options {
 
   // Used by protobuf itself and not supported for direct use by users.
   bool bootstrap = false;
+
+  // If true, preserve original field and enum value names without converting
+  // to CamelCase. For example, "user_name" stays as "user_name" instead of
+  // becoming "userName".
+  bool preserve_names;
+
+  // If true, generate xxxSpecified() method for optional fields in addition
+  // to hasXxx() method. This is useful for compatibility with some serialization
+  // frameworks.
+  bool generate_specified = false;
 };
 
 }  // namespace java

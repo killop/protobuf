@@ -23,7 +23,9 @@ struct Options {
         base_namespace_specified(false),
         internal_access(false),
         serializable(false),
-        strip_nonfunctional_codegen(false) {}
+        strip_nonfunctional_codegen(false),
+        preserve_names(false),
+        generate_specified(false) {}
   // Extension of the generated file. Defaults to ".cs"
   std::string file_extension;
   // Base namespace to use to create directory hierarchy. Defaults to "".
@@ -50,6 +52,14 @@ struct Options {
   bool serializable;
   // If true, strip out nonfunctional codegen.
   bool strip_nonfunctional_codegen;
+  // If true, preserve original field and enum value names without converting
+  // to PascalCase. For example, "user_name" stays as "user_name" instead of
+  // becoming "UserName", and "BRT_XX" stays as "BRT_XX" instead of "BrtXx".
+  bool preserve_names;
+  // If true, generate xxxSpecified property for optional fields in addition
+  // to HasXxx property. This is useful for compatibility with some serialization
+  // frameworks like .NET XML serialization.
+  bool generate_specified;
 };
 
 }  // namespace csharp

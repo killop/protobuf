@@ -55,16 +55,19 @@ std::string GetFieldName(const FieldDescriptor* descriptor);
 
 std::string GetFieldConstantName(const FieldDescriptor* field);
 
-std::string GetPropertyName(const FieldDescriptor* descriptor);
+std::string GetPropertyName(const FieldDescriptor* descriptor,
+                            const Options* options = nullptr);
 
-std::string GetOneofCaseName(const FieldDescriptor* descriptor);
+std::string GetOneofCaseName(const FieldDescriptor* descriptor,
+                             const Options* options = nullptr);
 
 int GetFixedSize(FieldDescriptor::Type type);
 
 // Note that we wouldn't normally want to export this (we're not expecting
 // it to be used outside libprotoc itself) but this exposes it for testing.
 std::string PROTOC_EXPORT GetEnumValueName(absl::string_view enum_name,
-                                           absl::string_view enum_value_name);
+                                           absl::string_view enum_value_name,
+                                           bool preserve_names = false);
 
 // TODO: perhaps we could move this to strutil
 std::string StringToBase64(absl::string_view input);
