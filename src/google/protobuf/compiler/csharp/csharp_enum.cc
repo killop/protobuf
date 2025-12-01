@@ -51,7 +51,8 @@ void EnumGenerator::Generate(io::Printer* printer) {
     }
     const absl::string_view original_name = descriptor_->value(i)->name();
     std::string name =
-        GetEnumValueName(descriptor_->name(), descriptor_->value(i)->name());
+        GetEnumValueName(descriptor_->name(), descriptor_->value(i)->name(),
+                         options()->preserve_names);
     // Make sure we don't get any duplicate names due to prefix removal.
     while (!used_names.insert(name).second) {
       // It's possible we'll end up giving this warning multiple times, but

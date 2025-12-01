@@ -227,6 +227,11 @@ void ImmutablePrimitiveFieldGenerator::GenerateInterfaceMembers(
                                  context_->options());
     printer->Print(variables_,
                    "$deprecation$boolean has$capitalized_name$();\n");
+    // Generate xxxSpecified() method if generate_specified option is set
+    if (context_->options().generate_specified) {
+      printer->Print(variables_,
+                     "$deprecation$boolean is$capitalized_name$Specified();\n");
+    }
   }
   WriteFieldAccessorDocComment(printer, descriptor_, GETTER,
                                context_->options());
@@ -247,6 +252,17 @@ void ImmutablePrimitiveFieldGenerator::GenerateMembers(
         "  return $is_field_present_message$;\n"
         "}\n");
     printer->Annotate("{", "}", descriptor_);
+    
+    // Generate xxxSpecified() method if generate_specified option is set
+    if (context_->options().generate_specified) {
+      printer->Print(
+          variables_,
+          "@java.lang.Override\n"
+          "$deprecation$public boolean ${$is$capitalized_name$Specified$}$() {\n"
+          "  return has$capitalized_name$();\n"
+          "}\n");
+      printer->Annotate("{", "}", descriptor_);
+    }
   }
 
   WriteFieldAccessorDocComment(printer, descriptor_, GETTER,
@@ -273,6 +289,17 @@ void ImmutablePrimitiveFieldGenerator::GenerateBuilderMembers(
         "  return $get_has_field_bit_builder$;\n"
         "}\n");
     printer->Annotate("{", "}", descriptor_);
+    
+    // Generate xxxSpecified() method if generate_specified option is set
+    if (context_->options().generate_specified) {
+      printer->Print(
+          variables_,
+          "@java.lang.Override\n"
+          "$deprecation$public boolean ${$is$capitalized_name$Specified$}$() {\n"
+          "  return has$capitalized_name$();\n"
+          "}\n");
+      printer->Annotate("{", "}", descriptor_);
+    }
   }
 
   WriteFieldAccessorDocComment(printer, descriptor_, GETTER,
@@ -508,6 +535,17 @@ void ImmutablePrimitiveOneofFieldGenerator::GenerateMembers(
                  "  return $has_oneof_case_message$;\n"
                  "}\n");
   printer->Annotate("{", "}", descriptor_);
+  
+  // Generate xxxSpecified() method if generate_specified option is set
+  if (context_->options().generate_specified) {
+    printer->Print(
+        variables_,
+        "@java.lang.Override\n"
+        "$deprecation$public boolean ${$is$capitalized_name$Specified$}$() {\n"
+        "  return has$capitalized_name$();\n"
+        "}\n");
+    printer->Annotate("{", "}", descriptor_);
+  }
 
   WriteFieldAccessorDocComment(printer, descriptor_, GETTER,
                                context_->options());
@@ -532,6 +570,16 @@ void ImmutablePrimitiveOneofFieldGenerator::GenerateBuilderMembers(
                  "  return $has_oneof_case_message$;\n"
                  "}\n");
   printer->Annotate("{", "}", descriptor_);
+  
+  // Generate xxxSpecified() method if generate_specified option is set
+  if (context_->options().generate_specified) {
+    printer->Print(
+        variables_,
+        "$deprecation$public boolean ${$is$capitalized_name$Specified$}$() {\n"
+        "  return has$capitalized_name$();\n"
+        "}\n");
+    printer->Annotate("{", "}", descriptor_);
+  }
 
   WriteFieldAccessorDocComment(printer, descriptor_, GETTER,
                                context_->options());

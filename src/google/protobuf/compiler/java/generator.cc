@@ -74,6 +74,10 @@ bool JavaGenerator::Generate(const FileDescriptor* file,
       file_options.strip_nonfunctional_codegen = true;
     } else if (option.first == "bootstrap") {
       file_options.bootstrap = true;
+    } else if (option.first == "preserve_names") {
+      file_options.preserve_names = true;
+    } else if (option.first == "generate_specified") {
+      file_options.generate_specified = true;
     } else {
       *error = absl::StrCat("Unknown generator option: ", option.first);
       return false;

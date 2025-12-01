@@ -151,12 +151,14 @@ std::string FileClassName(const FileDescriptor* file) {
   return FileClassName(file, /*immutable=*/true);
 }
 
-std::string CapitalizedFieldName(const FieldDescriptor* field) {
-  return UnderscoresToCamelCase(FieldName(field), true);
+std::string CapitalizedFieldName(const FieldDescriptor* field,
+                                 bool preserve_names) {
+  return UnderscoresToCamelCase(FieldName(field), true, preserve_names);
 }
 
-std::string CapitalizedOneofName(const OneofDescriptor* oneof) {
-  return UnderscoresToCamelCase(oneof->name(), true);
+std::string CapitalizedOneofName(const OneofDescriptor* oneof,
+                                 bool preserve_names) {
+  return UnderscoresToCamelCase(oneof->name(), true, preserve_names);
 }
 
 std::string UnderscoresToCamelCase(const FieldDescriptor* field) {

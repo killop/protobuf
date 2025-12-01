@@ -181,7 +181,17 @@ std::string TryRemovePrefix(absl::string_view prefix, absl::string_view value) {
 // For example, an enum called Color with a value of COLOR_BLUE should
 // result in an enum value in C# called just Blue
 std::string GetEnumValueName(absl::string_view enum_name,
-                             absl::string_view enum_value_name) {
+                             absl::string_view enum_value_name,
+                             bool preserve_names) {
+  // If preserve_names is true, return the original name without any conversion
+  if (preserve_names) {
+    std::string result(enum_value_name);
+    // Just make sure we have a valid identifier
+    if (!result.empty() && absl::ascii_isdigit(result[0])) {
+      return absl::StrCat("_", result);
+    }
+    return result;
+  }
   std::string stripped = TryRemovePrefix(enum_name, enum_value_name);
   std::string result = ShoutyToPascalCase(stripped);
   // Just in case we have an enum name of FOO and a value of FOO_2... make sure
@@ -218,7 +228,8 @@ std::string GetFieldConstantName(const FieldDescriptor* field) {
   return absl::StrCat(GetPropertyName(field), "FieldNumber");
 }
 
-std::string GetPropertyName(const FieldDescriptor* descriptor) {
+std::string GetPropertyName(const FieldDescriptor* descriptor,
+                            const Options* options) {
   // Names of members declared or overridden in the message.
   static const auto& reserved_member_names =
       *new absl::flat_hash_set<absl::string_view>(
@@ -226,8 +237,13 @@ std::string GetPropertyName(const FieldDescriptor* descriptor) {
            "WriteTo", "Clone", "CalculateSize", "MergeFrom", "OnConstruction",
            "Parser"});
 
-  // TODO: consider introducing csharp_property_name field option
-  std::string property_name = UnderscoresToPascalCase(GetFieldName(descriptor));
+  std::string property_name;
+  // If preserve_names option is set, use the original field name
+  if (options != nullptr && options->preserve_names) {
+    property_name = GetFieldName(descriptor);
+  } else {
+    property_name = UnderscoresToPascalCase(GetFieldName(descriptor));
+  }
   // Avoid either our own type name or reserved names.
   // There are various ways of ending up with naming collisions, but we try to
   // avoid obvious ones. In particular, we avoid the names of all the members we
@@ -242,11 +258,12 @@ std::string GetPropertyName(const FieldDescriptor* descriptor) {
   return property_name;
 }
 
-std::string GetOneofCaseName(const FieldDescriptor* descriptor) {
+std::string GetOneofCaseName(const FieldDescriptor* descriptor,
+                             const Options* options) {
   // The name in a oneof case enum is the same as for the property, but as we
   // always have a "None" value as well, we need to reserve that by appending an
   // underscore.
-  std::string property_name = GetPropertyName(descriptor);
+  std::string property_name = GetPropertyName(descriptor, options);
   return property_name == "None" ? "None_" : property_name;
 }
 
