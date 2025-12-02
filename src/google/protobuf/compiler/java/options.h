@@ -28,7 +28,8 @@ struct Options {
         strip_nonfunctional_codegen(false),
         jvm_dsl(true),
         dsl_use_concrete_types(false),
-        preserve_names(false) {}
+        preserve_names(false),
+        preserve_enum_names(false) {}
 
   bool generate_immutable_code;
   bool generate_mutable_code;
@@ -63,6 +64,12 @@ struct Options {
   // to CamelCase. For example, "user_name" stays as "user_name" instead of
   // becoming "userName".
   bool preserve_names;
+
+  // If true, preserve original enum value names without converting.
+  // This only affects enum values, not field names.
+  // Note: Java enum values are already preserved by default, but this option
+  // is provided for API consistency with C#.
+  bool preserve_enum_names;
 
   // If true, generate xxxSpecified() method for optional fields in addition
   // to hasXxx() method. This is useful for compatibility with some serialization

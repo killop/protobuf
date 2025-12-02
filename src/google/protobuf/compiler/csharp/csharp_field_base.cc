@@ -350,7 +350,7 @@ std::string FieldGeneratorBase::default_value(const FieldDescriptor* descriptor)
           GetClassName(descriptor->default_value_enum()->type()), ".",
           GetEnumValueName(descriptor->default_value_enum()->type()->name(),
                            descriptor->default_value_enum()->name(),
-                           options()->preserve_names));
+                           options()->preserve_names || options()->preserve_enum_names));
     case FieldDescriptor::TYPE_MESSAGE:
     case FieldDescriptor::TYPE_GROUP:
       if (IsWrapperType(descriptor)) {
