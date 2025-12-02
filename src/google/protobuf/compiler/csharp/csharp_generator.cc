@@ -61,6 +61,8 @@ bool Generator::Generate(const FileDescriptor* file,
       cli_options.strip_nonfunctional_codegen = true;
     } else if (options[i].first == "preserve_names") {
       cli_options.preserve_names = true;
+    } else if (options[i].first == "preserve_enum_names") {
+      cli_options.preserve_enum_names = true;
     } else if (options[i].first == "generate_specified") {
       cli_options.generate_specified = true;
     } else {

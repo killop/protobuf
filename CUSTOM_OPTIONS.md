@@ -13,7 +13,14 @@
   - C#: `csharp_options.h`, `csharp_generator.cc`, `csharp_helpers.h`, `csharp_helpers.cc`, `csharp_enum.cc`, `csharp_field_base.cc`
   - Java: `java/options.h`, `java/generator.cc`, `java/helpers.h`, `java/helpers.cc`, `java/names.h`, `java/names.cc`, `java/context.cc`
 
-**2. `generate_specified` 选项**
+**2. `preserve_enum_names` 选项**
+- 支持语言：C#, Java
+- 功能：仅保留 proto 文件中的原始枚举值名，不进行命名转换（不影响字段名）
+- 修改文件：
+  - C#: `csharp_options.h`, `csharp_generator.cc`, `csharp_enum.cc`
+  - Java: `java/options.h`, `java/generator.cc`
+
+**3. `generate_specified` 选项**
 - 支持语言：C#, Java
 - 功能：为 optional 字段额外生成 `xxxSpecified` 属性/方法，用于序列化框架兼容
 - 修改文件：
@@ -48,7 +55,32 @@ protoc --java_out=preserve_names:./output your.proto
 
 ---
 
-### 2. generate_specified
+### 2. preserve_enum_names
+
+仅保留原始枚举值名，不进行命名转换（不影响字段名）。
+
+#### 效果对比
+
+| Proto 枚举值名 | 正常模式 | preserve_enum_names |
+|--------------|----------|---------------------|
+| `BRT_XX` | `BrtXx` (C#) | `BRT_XX` (C#) |
+| `STATUS_OK` | `StatusOk` (C#) | `STATUS_OK` (C#) |
+
+注意：Java 的枚举值名称默认就是保留原始名称的，此选项主要用于 C#。
+
+#### 命令示例
+
+```bash
+# C#
+protoc --csharp_out=preserve_enum_names:./output your.proto
+
+# Java (为了 API 一致性提供，但实际上 Java 枚举值本来就不转换)
+protoc --java_out=preserve_enum_names:./output your.proto
+```
+
+---
+
+### 3. generate_specified
 
 为 optional 字段生成额外的 `xxxSpecified` 属性（C#）或 `isXxxSpecified()` 方法（Java）。
 
@@ -89,15 +121,18 @@ protoc --java_out=generate_specified:./output your.proto
 
 ---
 
-### 3. 同时使用多个选项
+### 4. 同时使用多个选项
 
 多个选项用逗号分隔：
 
 ```bash
-# C# - 同时启用两个选项
+# C# - 同时启用多个选项
 protoc --csharp_out=preserve_names,generate_specified:./output your.proto
 
-# Java - 同时启用两个选项
+# C# - 仅保留枚举值名 + 生成 Specified 属性
+protoc --csharp_out=preserve_enum_names,generate_specified:./output your.proto
+
+# Java - 同时启用多个选项
 protoc --java_out=preserve_names,generate_specified:./output your.proto
 ```
 

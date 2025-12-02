@@ -25,6 +25,7 @@ struct Options {
         serializable(false),
         strip_nonfunctional_codegen(false),
         preserve_names(false),
+        preserve_enum_names(false),
         generate_specified(false) {}
   // Extension of the generated file. Defaults to ".cs"
   std::string file_extension;
@@ -56,6 +57,10 @@ struct Options {
   // to PascalCase. For example, "user_name" stays as "user_name" instead of
   // becoming "UserName", and "BRT_XX" stays as "BRT_XX" instead of "BrtXx".
   bool preserve_names;
+  // If true, preserve original enum value names without converting to PascalCase.
+  // For example, "BRT_XX" stays as "BRT_XX" instead of "BrtXx".
+  // This only affects enum values, not field names.
+  bool preserve_enum_names;
   // If true, generate xxxSpecified property for optional fields in addition
   // to HasXxx property. This is useful for compatibility with some serialization
   // frameworks like .NET XML serialization.

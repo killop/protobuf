@@ -76,6 +76,8 @@ bool JavaGenerator::Generate(const FileDescriptor* file,
       file_options.bootstrap = true;
     } else if (option.first == "preserve_names") {
       file_options.preserve_names = true;
+    } else if (option.first == "preserve_enum_names") {
+      file_options.preserve_enum_names = true;
     } else if (option.first == "generate_specified") {
       file_options.generate_specified = true;
     } else {
