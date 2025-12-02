@@ -103,7 +103,12 @@ void MessageGenerator::Generate(io::Printer* printer) {
   printer->Print(
       "[global::System.Diagnostics.DebuggerDisplayAttribute(\"{ToString(),nq}"
       "\")]\n");
-  printer->Print(vars, "$access_level$ sealed partial class $class_name$ : ");
+  // When preserve_names is enabled, don't use sealed modifier
+  if (options()->preserve_names) {
+    printer->Print(vars, "$access_level$ partial class $class_name$ : ");
+  } else {
+    printer->Print(vars, "$access_level$ sealed partial class $class_name$ : ");
+  }
 
   if (has_extension_ranges_) {
     printer->Print(vars, "pb::IExtendableMessage<$class_name$>\n");
