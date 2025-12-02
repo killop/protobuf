@@ -18,6 +18,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/strip.h"
 #include "google/protobuf/compiler/csharp/names.h"
+#include "google/protobuf/compiler/csharp/csharp_options.h"
 #include "google/protobuf/descriptor.pb.h"
 
 // Must be last.
@@ -66,6 +67,18 @@ std::string ToCSharpName(absl::string_view name, const FileDescriptor* file) {
 std::string GetFileNamespace(const FileDescriptor* descriptor) {
   if (descriptor->options().has_csharp_namespace()) {
     return descriptor->options().csharp_namespace();
+  }
+  return UnderscoresToCamelCase(descriptor->package(), true, true);
+}
+
+std::string GetFileNamespace(const FileDescriptor* descriptor,
+                             const Options* options) {
+  if (descriptor->options().has_csharp_namespace()) {
+    return descriptor->options().csharp_namespace();
+  }
+  // If preserve_names is enabled, return the original package name
+  if (options != nullptr && options->preserve_names) {
+    return std::string(descriptor->package());
   }
   return UnderscoresToCamelCase(descriptor->package(), true, true);
 }
