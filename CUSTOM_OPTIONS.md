@@ -42,6 +42,8 @@
 | `user_name` | `UserName` (C#) / `getUserName()` (Java) | `user_name` (C#) / `getuser_name()` (Java) |
 | `buildingId` | `BuildingId` (C#) / `getBuildingId()` (Java) | `buildingId` (C#) / `getbuildingId()` (Java) |
 | `BRT_XX` (枚举) | `BrtXx` | `BRT_XX` |
+| `faster.pb.impl` (命名空间) | `Faster.Pb.Impl` | `faster.pb.impl` |
+| `event` (C#关键字) | `Event` | `@event` |
 
 #### 命令示例
 

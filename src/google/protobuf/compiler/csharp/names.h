@@ -31,12 +31,18 @@ class ServiceDescriptor;
 namespace compiler {
 namespace csharp {
 
+struct Options;
+
 // Requires:
 //   descriptor != NULL
 //
 // Returns:
 //   The namespace to use for given file descriptor.
 std::string PROTOC_EXPORT GetFileNamespace(const FileDescriptor* descriptor);
+
+// Overload that accepts Options to support preserve_names option.
+std::string PROTOC_EXPORT GetFileNamespace(const FileDescriptor* descriptor,
+                                           const Options* options);
 
 // Requires:
 //   descriptor != NULL
