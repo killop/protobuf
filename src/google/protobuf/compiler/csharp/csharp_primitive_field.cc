@@ -120,15 +120,23 @@ void PrimitiveFieldGenerator::GenerateMembers(io::Printer* printer) {
     "  }\n"
     "}\n");
 
-  // The "HasFoo" property, where required.
+  // The "HasFoo" or "FooSpecified" property, where required.
   if (SupportsPresenceApi(descriptor_)) {
     printer->Print(variables_,
       "/// <summary>Gets whether the \"$descriptor_name$\" field is set</summary>\n");
     AddPublicMemberAttributes(printer);
-    printer->Print(
-      variables_,
-      "$access_level$ bool Has$raw_property_name$ {\n"
-      "  get { return ");
+    // When preserve_names is enabled, use XxxSpecified instead of HasXxx
+    if (options()->preserve_names) {
+      printer->Print(
+        variables_,
+        "$access_level$ bool $raw_property_name$Specified {\n"
+        "  get { return ");
+    } else {
+      printer->Print(
+        variables_,
+        "$access_level$ bool Has$raw_property_name$ {\n"
+        "  get { return ");
+    }
     if (IsNullable(descriptor_)) {
       printer->Print(
         variables_,
@@ -139,8 +147,8 @@ void PrimitiveFieldGenerator::GenerateMembers(io::Printer* printer) {
         "$has_field_check$; }\n}\n");
     }
     
-    // The "FooSpecified" property, if generate_specified option is set.
-    if (options()->generate_specified) {
+    // The "FooSpecified" property, if generate_specified option is set (and not already using preserve_names).
+    if (options()->generate_specified && !options()->preserve_names) {
       printer->Print(variables_,
         "/// <summary>Gets or sets whether the \"$descriptor_name$\" field is specified (for XML serialization compatibility)</summary>\n");
       AddPublicMemberAttributes(printer);
@@ -296,11 +304,20 @@ void PrimitiveOneofFieldGenerator::GenerateMembers(io::Printer* printer) {
       variables_,
       "/// <summary>Gets whether the \"$descriptor_name$\" field is set</summary>\n");
     AddPublicMemberAttributes(printer);
-    printer->Print(
-      variables_,
-      "$access_level$ bool Has$raw_property_name$ {\n"
-      "  get { return $oneof_name$Case_ == $oneof_property_name$OneofCase.$oneof_case_name$; }\n"
-      "}\n");
+    // When preserve_names is enabled, use XxxSpecified instead of HasXxx
+    if (options()->preserve_names) {
+      printer->Print(
+        variables_,
+        "$access_level$ bool $raw_property_name$Specified {\n"
+        "  get { return $oneof_name$Case_ == $oneof_property_name$OneofCase.$oneof_case_name$; }\n"
+        "}\n");
+    } else {
+      printer->Print(
+        variables_,
+        "$access_level$ bool Has$raw_property_name$ {\n"
+        "  get { return $oneof_name$Case_ == $oneof_property_name$OneofCase.$oneof_case_name$; }\n"
+        "}\n");
+    }
     printer->Print(
       variables_,
       "/// <summary> Clears the value of the oneof if it's currently set to \"$descriptor_name$\" </summary>\n");

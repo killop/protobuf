@@ -112,6 +112,12 @@ std::string PROTOC_EXPORT GetOutputFile(const FileDescriptor* descriptor,
                                         bool generate_directories,
                                         absl::string_view base_namespace,
                                         std::string* error);
+std::string PROTOC_EXPORT GetOutputFile(const FileDescriptor* descriptor,
+                                        absl::string_view file_extension,
+                                        bool generate_directories,
+                                        absl::string_view base_namespace,
+                                        const Options* options,
+                                        std::string* error);
 
 std::string UnderscoresToPascalCase(absl::string_view input);
 

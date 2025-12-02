@@ -89,11 +89,20 @@ void FieldGeneratorBase::SetCommonFieldVariables(
         {"name_def_message", absl::StrCat((*variables)["name"], "_")});
   }
   if (SupportsPresenceApi(descriptor_)) {
-    variables->insert({"has_property_check",
-                       absl::StrCat("Has", (*variables)["raw_property_name"])});
-    variables->insert(
-        {"other_has_property_check",
-         absl::StrCat("other.Has", (*variables)["raw_property_name"])});
+    // When preserve_names is enabled, use XxxSpecified instead of HasXxx
+    if (options()->preserve_names) {
+      variables->insert({"has_property_check",
+                         absl::StrCat((*variables)["raw_property_name"], "Specified")});
+      variables->insert(
+          {"other_has_property_check",
+           absl::StrCat("other.", (*variables)["raw_property_name"], "Specified")});
+    } else {
+      variables->insert({"has_property_check",
+                         absl::StrCat("Has", (*variables)["raw_property_name"])});
+      variables->insert(
+          {"other_has_property_check",
+           absl::StrCat("other.Has", (*variables)["raw_property_name"])});
+    }
     variables->insert({"has_not_property_check",
                        absl::StrCat("!", (*variables)["has_property_check"])});
     variables->insert(
