@@ -85,6 +85,8 @@ FieldGeneratorBase* CreateFieldGenerator(const FieldDescriptor* descriptor,
                                          const Options* options);
 
 std::string GetFullExtensionName(const FieldDescriptor* descriptor);
+std::string GetFullExtensionName(const FieldDescriptor* descriptor,
+                                 const Options* options);
 
 bool IsNullable(const FieldDescriptor* descriptor);
 

@@ -176,7 +176,7 @@ void ReflectionClassGenerator::WriteDescriptor(io::Printer* printer) {
     }
     printer->Print("$full_reflection_class_name$.Descriptor, ",
                    "full_reflection_class_name",
-                   GetReflectionClassName(file_->dependency(i)));
+                   GetReflectionClassName(file_->dependency(i), options()));
   }
   printer->Print("},\n"
       "    new pbr::GeneratedClrTypeInfo(");
@@ -184,7 +184,7 @@ void ReflectionClassGenerator::WriteDescriptor(io::Printer* printer) {
   if (file_->enum_type_count() > 0) {
       printer->Print("new[] {");
       for (int i = 0; i < file_->enum_type_count(); i++) {
-          printer->Print("typeof($type_name$), ", "type_name", GetClassName(file_->enum_type(i)));
+          printer->Print("typeof($type_name$), ", "type_name", GetClassName(file_->enum_type(i), options()));
       }
       printer->Print("}, ");
   }
@@ -195,7 +195,7 @@ void ReflectionClassGenerator::WriteDescriptor(io::Printer* printer) {
     std::vector<std::string> extensions;
     extensions.reserve(file_->extension_count());
     for (int i = 0; i < file_->extension_count(); i++) {
-      extensions.push_back(GetFullExtensionName(file_->extension(i)));
+      extensions.push_back(GetFullExtensionName(file_->extension(i), options()));
     }
     printer->Print("new pb::Extension[] { $extensions$ }, ", "extensions", absl::StrJoin(extensions, ", "));
   }
@@ -240,7 +240,7 @@ void ReflectionClassGenerator::WriteGeneratedCodeInfo(const Descriptor* descript
     return;
   }
   // Generated message type
-  printer->Print("new pbr::GeneratedClrTypeInfo(typeof($type_name$), $type_name$.Parser, ", "type_name", GetClassName(descriptor));
+  printer->Print("new pbr::GeneratedClrTypeInfo(typeof($type_name$), $type_name$.Parser, ", "type_name", GetClassName(descriptor, options()));
 
   // Fields
   if (descriptor->field_count() > 0) {
@@ -285,7 +285,7 @@ void ReflectionClassGenerator::WriteGeneratedCodeInfo(const Descriptor* descript
       std::vector<std::string> enums;
       enums.reserve(descriptor->enum_type_count());
       for (int i = 0; i < descriptor->enum_type_count(); i++) {
-          enums.push_back(GetClassName(descriptor->enum_type(i)));
+          enums.push_back(GetClassName(descriptor->enum_type(i), options()));
       }
       printer->Print("new[]{ typeof($enums$) }, ", "enums", absl::StrJoin(enums, "), typeof("));
   }
@@ -298,7 +298,7 @@ void ReflectionClassGenerator::WriteGeneratedCodeInfo(const Descriptor* descript
     std::vector<std::string> extensions;
     extensions.reserve(descriptor->extension_count());
     for (int i = 0; i < descriptor->extension_count(); i++) {
-      extensions.push_back(GetFullExtensionName(descriptor->extension(i)));
+      extensions.push_back(GetFullExtensionName(descriptor->extension(i), options()));
     }
     printer->Print("new pb::Extension[] { $extensions$ }, ", "extensions", absl::StrJoin(extensions, ", "));
   }

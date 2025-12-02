@@ -74,7 +74,7 @@ void FieldGeneratorBase::SetCommonFieldVariables(
   // property_name escapes C# keywords with @ prefix for use as standalone identifier
   (*variables)["property_name"] = EscapeIfCSharpKeyword(property_name());
   (*variables)["type_name"] = type_name();
-  (*variables)["extended_type"] = GetClassName(descriptor_->containing_type());
+  (*variables)["extended_type"] = GetClassName(descriptor_->containing_type(), options());
   (*variables)["name"] = name();
   (*variables)["descriptor_name"] = std::string(descriptor_->name());
   (*variables)["default_value"] = default_value();
@@ -220,7 +220,7 @@ std::string FieldGeneratorBase::type_name() {
 std::string FieldGeneratorBase::type_name(const FieldDescriptor* descriptor) {
   switch (descriptor->type()) {
     case FieldDescriptor::TYPE_ENUM:
-      return GetClassName(descriptor->enum_type());
+      return GetClassName(descriptor->enum_type(), options());
     case FieldDescriptor::TYPE_MESSAGE:
     case FieldDescriptor::TYPE_GROUP:
       if (IsWrapperType(descriptor)) {
@@ -236,7 +236,7 @@ std::string FieldGeneratorBase::type_name(const FieldDescriptor* descriptor) {
           return absl::StrCat(wrapped_field_type_name, "?");
         }
       }
-      return GetClassName(descriptor->message_type());
+      return GetClassName(descriptor->message_type(), options());
     case FieldDescriptor::TYPE_DOUBLE:
       return "double";
     case FieldDescriptor::TYPE_FLOAT:
@@ -350,7 +350,7 @@ std::string FieldGeneratorBase::default_value(const FieldDescriptor* descriptor)
   switch (descriptor->type()) {
     case FieldDescriptor::TYPE_ENUM:
       return absl::StrCat(
-          GetClassName(descriptor->default_value_enum()->type()), ".",
+          GetClassName(descriptor->default_value_enum()->type(), options()), ".",
           GetEnumValueName(descriptor->default_value_enum()->type()->name(),
                            descriptor->default_value_enum()->name(),
                            options()->preserve_names || options()->preserve_enum_names));

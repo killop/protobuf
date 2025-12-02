@@ -212,6 +212,17 @@ std::string GetFullExtensionName(const FieldDescriptor* descriptor) {
                       GetPropertyName(descriptor));
 }
 
+std::string GetFullExtensionName(const FieldDescriptor* descriptor,
+                                 const Options* options) {
+  if (descriptor->extension_scope()) {
+    return absl::StrCat(GetClassName(descriptor->extension_scope(), options),
+                        ".Extensions.", GetPropertyName(descriptor, options));
+  }
+
+  return absl::StrCat(GetExtensionClassUnqualifiedName(descriptor->file()), ".",
+                      GetPropertyName(descriptor, options));
+}
+
 // Groups in proto2 are hacky: The name of the field is just the lower-cased
 // name of the group type. In C#, though, we would like to retain the original
 // capitalization of the type name. Fields with an encoding of "delimited" in

@@ -50,6 +50,8 @@ std::string PROTOC_EXPORT GetFileNamespace(const FileDescriptor* descriptor,
 // Returns:
 //   The fully-qualified C# class name.
 std::string PROTOC_EXPORT GetClassName(const Descriptor* descriptor);
+std::string PROTOC_EXPORT GetClassName(const Descriptor* descriptor,
+                                       const Options* options);
 
 // Requires:
 //   descriptor != NULL
@@ -57,6 +59,8 @@ std::string PROTOC_EXPORT GetClassName(const Descriptor* descriptor);
 // Returns:
 //   The fully-qualified C# enum class name.
 std::string GetClassName(const EnumDescriptor* descriptor);
+std::string GetClassName(const EnumDescriptor* descriptor,
+                         const Options* options);
 
 // Requires:
 //   descriptor != NULL
@@ -86,6 +90,8 @@ std::string GetExtensionClassUnqualifiedName(const FileDescriptor* descriptor);
 //   processed.
 std::string PROTOC_EXPORT
 GetReflectionClassName(const FileDescriptor* descriptor);
+std::string PROTOC_EXPORT
+GetReflectionClassName(const FileDescriptor* descriptor, const Options* options);
 
 // Generates output file name for given file descriptor. If generate_directories
 // is true, the output file will be put under directory corresponding to file's
