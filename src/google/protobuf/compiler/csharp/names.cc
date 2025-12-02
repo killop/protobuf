@@ -45,6 +45,18 @@ std::string GetFileNameBase(const FileDescriptor* descriptor) {
   return UnderscoresToPascalCase(StripDotProto(base));
 }
 
+// Returns the file name base, preserving original name if preserve_names is set.
+std::string GetFileNameBase(const FileDescriptor* descriptor,
+                            const Options* options) {
+  const absl::string_view proto_file = descriptor->name();
+  int lastslash = proto_file.find_last_of('/');
+  const absl::string_view base = proto_file.substr(lastslash + 1);
+  if (options != nullptr && options->preserve_names) {
+    return std::string(StripDotProto(base));
+  }
+  return UnderscoresToPascalCase(StripDotProto(base));
+}
+
 std::string ToCSharpName(absl::string_view name, const FileDescriptor* file) {
     std::string result = GetFileNamespace(file);
     if (!result.empty()) {
@@ -172,6 +184,34 @@ std::string GetOutputFile(const FileDescriptor* descriptor,
                             " is not a prefix namespace of base namespace ",
                             base_namespace);
       return "";  // This will be ignored, because we've set an error.
+    }
+  }
+
+  return absl::StrCat(absl::StrReplaceAll(namespace_suffix, {{".", "/"}}),
+                      namespace_suffix.empty() ? "" : "/", relative_filename);
+}
+
+std::string GetOutputFile(const FileDescriptor* descriptor,
+                          absl::string_view file_extension,
+                          bool generate_directories,
+                          absl::string_view base_namespace,
+                          const Options* options,
+                          std::string* error) {
+  std::string relative_filename =
+      absl::StrCat(GetFileNameBase(descriptor, options), file_extension);
+  if (!generate_directories) {
+    return relative_filename;
+  }
+  std::string ns = GetFileNamespace(descriptor, options);
+  absl::string_view namespace_suffix = ns;
+  if (!base_namespace.empty()) {
+    if (!absl::ConsumePrefix(&namespace_suffix, base_namespace) ||
+        (!namespace_suffix.empty() &&
+         !absl::ConsumePrefix(&namespace_suffix, "."))) {
+      *error = absl::StrCat("Namespace ", ns,
+                            " is not a prefix namespace of base namespace ",
+                            base_namespace);
+      return "";
     }
   }
 

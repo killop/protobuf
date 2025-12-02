@@ -62,11 +62,20 @@ void WrapperFieldGenerator::GenerateMembers(io::Printer* printer) {
       variables_,
       "/// <summary>Gets whether the $descriptor_name$ field is set</summary>\n");
     AddPublicMemberAttributes(printer);
-    printer->Print(
-      variables_,
-      "$access_level$ bool Has$raw_property_name$ {\n"
-      "  get { return $name$_ != null; }\n"
-      "}\n\n");
+    // When preserve_names is enabled, use XxxSpecified instead of HasXxx
+    if (options()->preserve_names) {
+      printer->Print(
+        variables_,
+        "$access_level$ bool $raw_property_name$Specified {\n"
+        "  get { return $name$_ != null; }\n"
+        "}\n\n");
+    } else {
+      printer->Print(
+        variables_,
+        "$access_level$ bool Has$raw_property_name$ {\n"
+        "  get { return $name$_ != null; }\n"
+        "}\n\n");
+    }
     printer->Print(
       variables_,
       "/// <summary>Clears the value of the $descriptor_name$ field</summary>\n");
@@ -216,11 +225,20 @@ void WrapperOneofFieldGenerator::GenerateMembers(io::Printer* printer) {
       variables_,
       "/// <summary>Gets whether the \"$descriptor_name$\" field is set</summary>\n");
     AddPublicMemberAttributes(printer);
-    printer->Print(
-      variables_,
-      "$access_level$ bool Has$raw_property_name$ {\n"
-      "  get { return $oneof_name$Case_ == $oneof_property_name$OneofCase.$oneof_case_name$; }\n"
-      "}\n");
+    // When preserve_names is enabled, use XxxSpecified instead of HasXxx
+    if (options()->preserve_names) {
+      printer->Print(
+        variables_,
+        "$access_level$ bool $raw_property_name$Specified {\n"
+        "  get { return $oneof_name$Case_ == $oneof_property_name$OneofCase.$oneof_case_name$; }\n"
+        "}\n");
+    } else {
+      printer->Print(
+        variables_,
+        "$access_level$ bool Has$raw_property_name$ {\n"
+        "  get { return $oneof_name$Case_ == $oneof_property_name$OneofCase.$oneof_case_name$; }\n"
+        "}\n");
+    }
     printer->Print(
       variables_,
       "/// <summary> Clears the value of the oneof if it's currently set to \"$descriptor_name$\" </summary>\n");

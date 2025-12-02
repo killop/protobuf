@@ -76,6 +76,7 @@ bool Generator::Generate(const FileDescriptor* file,
       cli_options.file_extension,
       cli_options.base_namespace_specified,
       cli_options.base_namespace,
+      &cli_options,
       &filename_error);
 
   if (filename.empty()) {
