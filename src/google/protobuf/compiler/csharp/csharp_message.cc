@@ -71,7 +71,7 @@ std::string MessageGenerator::class_name() {
 }
 
 std::string MessageGenerator::full_class_name() {
-  return GetClassName(descriptor_);
+  return GetClassName(descriptor_, options());
 }
 
 const std::vector<const FieldDescriptor*>&
@@ -158,11 +158,11 @@ void MessageGenerator::Generate(io::Printer* printer) {
   // containing message descriptor.
   if (!descriptor_->containing_type()) {
     vars["descriptor_accessor"] =
-        absl::StrCat(GetReflectionClassName(descriptor_->file()),
+        absl::StrCat(GetReflectionClassName(descriptor_->file(), options()),
                      ".Descriptor.MessageTypes[", descriptor_->index(), "]");
   } else {
     vars["descriptor_accessor"] =
-        absl::StrCat(GetClassName(descriptor_->containing_type()),
+        absl::StrCat(GetClassName(descriptor_->containing_type(), options()),
                      ".Descriptor.NestedTypes[", descriptor_->index(), "]");
   }
 

@@ -62,6 +62,24 @@ std::string ToCSharpName(absl::string_view name, const FileDescriptor* file) {
                         absl::StrReplaceAll(classname, {{".", ".Types."}}));
 }
 
+std::string ToCSharpName(absl::string_view name, const FileDescriptor* file,
+                         const Options* options) {
+    std::string result = GetFileNamespace(file, options);
+    if (!result.empty()) {
+      result += '.';
+    }
+    absl::string_view classname;
+    if (file->package().empty()) {
+      classname = name;
+    } else {
+      // Strip the proto package from full_name since we've replaced it with
+      // the C# namespace.
+      classname = name.substr(file->package().size() + 1);
+    }
+    return absl::StrCat("global::", result,
+                        absl::StrReplaceAll(classname, {{".", ".Types."}}));
+}
+
 }  // namespace
 
 std::string GetFileNamespace(const FileDescriptor* descriptor) {
@@ -87,8 +105,16 @@ std::string GetClassName(const Descriptor* descriptor) {
   return ToCSharpName(descriptor->full_name(), descriptor->file());
 }
 
+std::string GetClassName(const Descriptor* descriptor, const Options* options) {
+  return ToCSharpName(descriptor->full_name(), descriptor->file(), options);
+}
+
 std::string GetClassName(const EnumDescriptor* descriptor) {
   return ToCSharpName(descriptor->full_name(), descriptor->file());
+}
+
+std::string GetClassName(const EnumDescriptor* descriptor, const Options* options) {
+  return ToCSharpName(descriptor->full_name(), descriptor->file(), options);
 }
 
 std::string GetReflectionClassUnqualifiedName(const FileDescriptor* descriptor) {
@@ -99,6 +125,16 @@ std::string GetReflectionClassUnqualifiedName(const FileDescriptor* descriptor) 
 
 std::string GetReflectionClassName(const FileDescriptor* descriptor) {
   std::string result = GetFileNamespace(descriptor);
+  if (!result.empty()) {
+    result += '.';
+  }
+  return absl::StrCat("global::", result,
+                      GetReflectionClassUnqualifiedName(descriptor));
+}
+
+std::string GetReflectionClassName(const FileDescriptor* descriptor,
+                                   const Options* options) {
+  std::string result = GetFileNamespace(descriptor, options);
   if (!result.empty()) {
     result += '.';
   }
