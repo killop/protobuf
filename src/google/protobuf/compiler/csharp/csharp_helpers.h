@@ -69,6 +69,12 @@ std::string PROTOC_EXPORT GetEnumValueName(absl::string_view enum_name,
                                            absl::string_view enum_value_name,
                                            bool preserve_names = false);
 
+// Check if a name is a C# keyword
+bool IsCSharpKeyword(absl::string_view name);
+
+// Escape C# keywords by adding @ prefix
+std::string EscapeIfCSharpKeyword(const std::string& name);
+
 // TODO: perhaps we could move this to strutil
 std::string StringToBase64(absl::string_view input);
 

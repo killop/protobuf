@@ -69,7 +69,10 @@ void FieldGeneratorBase::SetCommonFieldVariables(
 
   (*variables)["access_level"] = "public";
 
-  (*variables)["property_name"] = property_name();
+  // raw_property_name is used for concatenation (e.g., HasFoo, ClearFoo)
+  (*variables)["raw_property_name"] = property_name();
+  // property_name escapes C# keywords with @ prefix for use as standalone identifier
+  (*variables)["property_name"] = EscapeIfCSharpKeyword(property_name());
   (*variables)["type_name"] = type_name();
   (*variables)["extended_type"] = GetClassName(descriptor_->containing_type());
   (*variables)["name"] = name();
@@ -87,10 +90,10 @@ void FieldGeneratorBase::SetCommonFieldVariables(
   }
   if (SupportsPresenceApi(descriptor_)) {
     variables->insert({"has_property_check",
-                       absl::StrCat("Has", (*variables)["property_name"])});
+                       absl::StrCat("Has", (*variables)["raw_property_name"])});
     variables->insert(
         {"other_has_property_check",
-         absl::StrCat("other.Has", (*variables)["property_name"])});
+         absl::StrCat("other.Has", (*variables)["raw_property_name"])});
     variables->insert({"has_not_property_check",
                        absl::StrCat("!", (*variables)["has_property_check"])});
     variables->insert(
@@ -120,7 +123,7 @@ void FieldGeneratorBase::SetCommonOneofFieldVariables(
     absl::flat_hash_map<absl::string_view, std::string>* variables) {
   (*variables)["oneof_name"] = oneof_name();
   if (SupportsPresenceApi(descriptor_)) {
-    (*variables)["has_property_check"] = absl::StrCat("Has", property_name());
+    (*variables)["has_property_check"] = absl::StrCat("Has", (*variables)["raw_property_name"]);
   } else {
     (*variables)["has_property_check"] =
         absl::StrCat(oneof_name(), "Case_ == ", oneof_property_name(),

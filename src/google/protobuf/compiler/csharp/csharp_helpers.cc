@@ -228,6 +228,36 @@ std::string GetFieldConstantName(const FieldDescriptor* field) {
   return absl::StrCat(GetPropertyName(field), "FieldNumber");
 }
 
+// C# keywords that need @ prefix when used as identifiers
+static const absl::flat_hash_set<absl::string_view>& GetCSharpKeywords() {
+  static const auto& csharp_keywords =
+      *new absl::flat_hash_set<absl::string_view>({
+          "abstract", "as", "base", "bool", "break", "byte", "case", "catch",
+          "char", "checked", "class", "const", "continue", "decimal", "default",
+          "delegate", "do", "double", "else", "enum", "event", "explicit",
+          "extern", "false", "finally", "fixed", "float", "for", "foreach",
+          "goto", "if", "implicit", "in", "int", "interface", "internal", "is",
+          "lock", "long", "namespace", "new", "null", "object", "operator",
+          "out", "override", "params", "private", "protected", "public",
+          "readonly", "ref", "return", "sbyte", "sealed", "short", "sizeof",
+          "stackalloc", "static", "string", "struct", "switch", "this", "throw",
+          "true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe",
+          "ushort", "using", "virtual", "void", "volatile", "while"
+      });
+  return csharp_keywords;
+}
+
+bool IsCSharpKeyword(absl::string_view name) {
+  return GetCSharpKeywords().find(name) != GetCSharpKeywords().end();
+}
+
+std::string EscapeIfCSharpKeyword(const std::string& name) {
+  if (IsCSharpKeyword(name)) {
+    return absl::StrCat("@", name);
+  }
+  return name;
+}
+
 std::string GetPropertyName(const FieldDescriptor* descriptor,
                             const Options* options) {
   // Names of members declared or overridden in the message.

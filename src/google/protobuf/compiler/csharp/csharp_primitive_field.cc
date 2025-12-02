@@ -127,7 +127,7 @@ void PrimitiveFieldGenerator::GenerateMembers(io::Printer* printer) {
     AddPublicMemberAttributes(printer);
     printer->Print(
       variables_,
-      "$access_level$ bool Has$property_name$ {\n"
+      "$access_level$ bool Has$raw_property_name$ {\n"
       "  get { return ");
     if (IsNullable(descriptor_)) {
       printer->Print(
@@ -146,8 +146,8 @@ void PrimitiveFieldGenerator::GenerateMembers(io::Printer* printer) {
       AddPublicMemberAttributes(printer);
       printer->Print(
         variables_,
-        "$access_level$ bool $property_name$Specified {\n"
-        "  get { return Has$property_name$; }\n"
+        "$access_level$ bool $raw_property_name$Specified {\n"
+        "  get { return Has$raw_property_name$; }\n"
         "  set { /* setter for serialization compatibility */ }\n"
         "}\n");
     }
@@ -160,7 +160,7 @@ void PrimitiveFieldGenerator::GenerateMembers(io::Printer* printer) {
     AddPublicMemberAttributes(printer);
     printer->Print(
       variables_,
-      "$access_level$ void Clear$property_name$() {\n");
+      "$access_level$ void Clear$raw_property_name$() {\n");
     if (IsNullable(descriptor_)) {
       printer->Print(variables_, "  $name$_ = null;\n");
     } else {
@@ -298,7 +298,7 @@ void PrimitiveOneofFieldGenerator::GenerateMembers(io::Printer* printer) {
     AddPublicMemberAttributes(printer);
     printer->Print(
       variables_,
-      "$access_level$ bool Has$property_name$ {\n"
+      "$access_level$ bool Has$raw_property_name$ {\n"
       "  get { return $oneof_name$Case_ == $oneof_property_name$OneofCase.$oneof_case_name$; }\n"
       "}\n");
     printer->Print(
@@ -307,7 +307,7 @@ void PrimitiveOneofFieldGenerator::GenerateMembers(io::Printer* printer) {
     AddPublicMemberAttributes(printer);
     printer->Print(
       variables_,
-      "$access_level$ void Clear$property_name$() {\n"
+      "$access_level$ void Clear$raw_property_name$() {\n"
       "  if ($has_property_check$) {\n"
       "    Clear$oneof_property_name$();\n"
       "  }\n"
